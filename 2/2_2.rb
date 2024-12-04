@@ -32,12 +32,7 @@ m.each do |line|
     n += 1
     next
   end 
-  line.reject_subsets.each do |sub|
-    if sub.deriv.valid?
-      n += 1
-      break
-    end 
-  end
+  n += 1 if line.reject_subsets.map(&:deriv).map(&:valid?).any?
 end
 
 puts n
