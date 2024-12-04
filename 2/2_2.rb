@@ -18,20 +18,22 @@ class Array
     self.all? { |x| [1,2,3].include? x } || self.all? { |x| [-1,-2,-3].include? x }
   end
 
+  def deriv
+    return self.each_cons(2).map {|y,z|y-z}
+  end
+
 end
 
 m = ARGF.map { |x| x.split.map(&:to_i) }
 
 n = 0
 m.each do |line|
-  inc = line.each_cons(2).map {|y,z|y-z}
-  if inc.valid?
+  if line.deriv.valid?
     n += 1
     next
   end 
   line.reject_subsets.each do |sub|
-    inc = sub.each_cons(2).map {|y,z|y-z}
-    if inc.valid?
+    if sub.deriv.valid?
       n += 1
       break
     end 
