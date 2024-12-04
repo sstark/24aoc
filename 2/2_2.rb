@@ -3,15 +3,11 @@
 class Array
 
   def reject_i(idx)
-    return self.reject.each_with_index{|x,i|idx==i}
+    return self.reject.each_with_index{ |x,i| idx==i }
   end
 
   def reject_subsets
-    ret = []
-    self.size.times do |i|
-      ret << self.reject_i(i)
-    end
-    return ret
+    self.map.with_index { |x,i| self.reject_i(i) }
   end
 
   def valid?
@@ -19,7 +15,7 @@ class Array
   end
 
   def deriv
-    return self.each_cons(2).map {|y,z|y-z}
+    return self.each_cons(2).map { |y,z| y-z }
   end
 
 end
