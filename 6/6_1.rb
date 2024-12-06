@@ -5,16 +5,16 @@ R = [0,1]
 DOWN = [1,0]
 L = [0,-1]
 
-obstacles = []
+input = ARGF.readlines
+width = input.size
+obstacles = Array.new(width) { |x| [] }
 start = []
 start_dir = []
-max_y = 0
-max_x = 0
-ARGF.readlines.map(&:chomp).each_with_index do |line, y|
+input.map(&:chomp).each_with_index do |line, y|
   line.split("").each_with_index do |c, x|
     case c
     when "#"
-      obstacles << [y, x]
+      obstacles[y][x] = true
     when "^"
       start = [y, x]
       start_dir = UP
@@ -28,15 +28,13 @@ ARGF.readlines.map(&:chomp).each_with_index do |line, y|
       start = [y, x]
       start_dir = L
     end
-    max_x = x
   end
-  max_y = y
 end
 
 class Guard
 
   def initialize(dim, obstacles, start, start_dir)
-    @max_y, @max_x = dim
+    @dim = dim
     @obstacles = obstacles
     @pos = start
     @dir = start_dir
@@ -51,7 +49,7 @@ class Guard
 
   def outside?(pos)
     y, x = pos
-    return y < 0 || x < 0 || y > @max_y - 1 || x > @max_x - 1
+    return y < 0 || x < 0 || y > @dim - 2 || x > @dim - 2
   end
 
   def rotate()
@@ -69,7 +67,8 @@ class Guard
 
   def walk()
     next_position = self.vec_add(@pos, @dir)
-    if @obstacles.include? next_position
+    y, x = next_position
+    if @obstacles[y][x]
       self.rotate
     elsif self.outside? next_position
       @track << @pos
@@ -87,7 +86,7 @@ class Guard
 
 end
 
-guard = Guard.new([max_y, max_x], obstacles, start, start_dir)
+guard = Guard.new(width, obstacles, start, start_dir)
 loop do
   break if guard.walk == nil
 end
