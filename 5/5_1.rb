@@ -18,11 +18,10 @@ updates.each do |update|
     ia = update.index a
     ib = update.index b 
     next if ia == nil or ib == nil
+    good = true
     if ia > ib
       good = false
       break
-    else
-      good = true
     end
   end
   if good
