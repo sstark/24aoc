@@ -70,12 +70,12 @@ class Guard
     end
   end
 
-  def update_track(pos, dir)
-    @track[pos] = @track.fetch(pos, []) << dir
+  def update_track()
+    @track[@pos] = @track.fetch(@pos, []) << @dir
   end
 
   def walk()
-    self.update_track(@pos, @dir)
+    self.update_track()
     next_position = self.vec_add(@pos, @dir)
     y, x = next_position
     if self.outside? next_position
@@ -123,33 +123,34 @@ class Guard
     return @startpos
   end
 
+  def patrol
+    loop do
+      break if self.walk == nil
+    end
+  end
+
 end
 
+# Initial patrol to determine path
 guard = Guard.new(width, obstacles, start, start_dir)
-loop do
-  break if guard.walk == nil
-end
+guard.patrol
 track = guard.track
-startpos = guard.startpos
 
 traps = 0
 (0..width-1).each do |y|
   puts y
   (0..width-1).each do |x|
-    next if [y,x] == startpos
+    next if [y,x] == start
     next if !track[[y,x]]
-    # deep copy. Lame but works to reset obstacles
+    # Deep copy. Lame but works to reset obstacles
     o = Marshal.load(Marshal.dump(obstacles))
     o[y][x] = true
     guard = Guard.new(width, o, start, start_dir)
-    loop do
-      break if guard.walk == nil
-    end
+    guard.patrol
     if guard.trapped?
       traps += 1
       # guard.draw
     end
   end
 end
-
 puts "traps: #{traps}"
