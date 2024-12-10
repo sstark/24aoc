@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+eqs = {}
+ARGF.readlines.map(&:chomp).each do |line|
+  res, vals = line.split(": ")
+  vals = vals.split(" ").map(&:to_i)
+  eqs[res.to_i] = vals
+end
+
+result = eqs.filter do |test,values|
+  [:*, :+].repeated_permutation(values.size-1).map do |oper|
+    values[1..-1].each.with_index.reduce(values[0]) do |s, (x, i)|
+      s.send(oper[i], x)
+    end 
+  end.any? { |k| k == test }
+end
+
+p result.keys.sum
