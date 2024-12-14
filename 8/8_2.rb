@@ -43,19 +43,23 @@ class AntennaMap
     return [sy+2*(ay-sy), sx+2*(ax-sx)]
   end
 
+  def outside?(y, x)
+    return y < 0 || x < 0 || y > @height-1 || x > @width-1
+  end
+
   def preflect_all(a, s)
     ay, ax = a
     sy, sx = s
     out = [a, s]
     y = sy+2*(ay-sy)
     x = sx+2*(ax-sx)
-    unless y < 0 || x < 0 || y > @height-1 || x > @width-1
+    unless outside?(y, x)
       out << [y, x]
     end
     loop do
       y = y+(ay-sy)
       x = x+(ax-sx)
-      break if y < 0 || x < 0 || y > @height-1 || x > @width-1
+      break if outside?(y, x)
       out << [y, x]
     end
     return out
